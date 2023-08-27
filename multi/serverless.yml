@@ -1,0 +1,28 @@
+org: gabriellastaniecki
+app: hello-sls
+service: multi
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: qa
+  environment:
+    ${file(./config/env.${self:provider.stage}.json)}
+custom:
+  schedulerRate: rate(1 minute)
+  enabled: true
+  tableName: ${self:provider.environment.DbTableName}
+  dbWriteCapacityUnits: ${self:provider.environment.DbWriteCapacityUnits}
+  dbReadCapacityUnits: ${self:provider.environment.DbReadCapacityUnits}
+
+functions:
+  hello:
+    handler: src/handler.hello
+    events:
+      - schedule:
+          rate: ${self:custom.schedulerRate}
+          name: schedule-commit-message-${self:provider.stage}
+          description: get commit messages every minute
+          enabled: ${self:custom.enabled}
