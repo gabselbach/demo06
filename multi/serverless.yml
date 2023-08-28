@@ -5,7 +5,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs16.x
   region: us-east-1
   stage: qa
   environment:
@@ -18,8 +18,8 @@ custom:
   dbReadCapacityUnits: ${self:provider.environment.DbReadCapacityUnits}
 
 functions:
-  hello:
-    handler: src/handler.hello
+  main:
+    handler: src/handler.main
     events:
       - schedule:
           rate: ${self:custom.schedulerRate}
